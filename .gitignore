@@ -1,0 +1,39 @@
+﻿# Build outputs
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS/VSCode
+.vs/
+.vscode/
+
+# Publish
+*.pubxml
+*.publishsettings
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Resharper / Rider
+_ReSharper.*
+*.DotSettings.user
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Secrets / env
+appsettings.*.local.json
+secrets.json
+
+# EF Core
+# مایگریشن‌ها باید **کامیت** شوند؛ پس پوشه Migrations را حذف نکن!
+# (قانون خاصی لازم نیست؛ این کامنت فقط یادآوری است.)
