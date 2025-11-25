@@ -32,6 +32,9 @@ public class Product
 
     public bool IsActive { get; set; } = true;
 
+    [MaxLength(260)]
+    public string? ImageFileName { get; set; }   // 👈 اسم فایل عکس
+
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset? UpdatedAt { get; set; }
 }

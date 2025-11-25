@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sushi.Data;
 
@@ -11,9 +12,11 @@ using Sushi.Data;
 namespace Sushi.Migrations
 {
     [DbContext(typeof(SushiDbContext))]
-    partial class SushiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251125101902_AddProductImage")]
+    partial class AddProductImage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,7 +44,7 @@ namespace Sushi.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ImageFileName")
+                    b.Property<string>("ImagePath")
                         .HasMaxLength(260)
                         .HasColumnType("nvarchar(260)");
 

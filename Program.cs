@@ -3,12 +3,12 @@ using Sushi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Controllers & Swagger
+// ثبت کنترلرها و Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// CORS برای فرانت‌اند (Next.js روی 3000)
+// CORS برای فرانت‌اند (Next.js روی پورت 3000)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", p =>
@@ -23,14 +23,18 @@ builder.Services.AddDbContext<SushiDbContext>(options =>
 
 var app = builder.Build();
 
+// Swagger فقط در حالت Development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// فقط HTTP می‌خوایم
+// اگر نمی‌خوای HTTPS اجباری باشه، همین‌طور کامنت بمونه
 // app.UseHttpsRedirection();
+
+// 👈 خیلی مهم: برای سرو کردن فایل‌های استاتیک مثل عکس‌ها از wwwroot
+app.UseStaticFiles();
 
 // فعال‌سازی CORS قبل از کنترلرها
 app.UseCors("frontend");
