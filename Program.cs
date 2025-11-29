@@ -1,5 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Sushi.Data;
+using Sushi.Models.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +26,37 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<SushiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
+// Password hasher برای کاربران
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+// تنظیمات JWT
+var jwtKey = builder.Configuration["Jwt:Key"]
+             ?? "p9Z!c3P#qLm82^Gd5@wXr7$Bk1Nf4&Hs8Yz0TuV6jKoQ2eCiR%aDnLgMhJ";
+
+var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+            ClockSkew = TimeSpan.FromMinutes(2)
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Swagger فقط در حالت Development
@@ -30,15 +66,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// اگر نمی‌خوای HTTPS اجباری باشه، همین‌طور کامنت بمونه
-// app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // اگر HTTPS نمی‌خوای، همین‌طور کامنت باشه
 
-// 👈 خیلی مهم: برای سرو کردن فایل‌های استاتیک مثل عکس‌ها از wwwroot
+// سرو کردن فایل‌های استاتیک مثل عکس‌ها از wwwroot
 app.UseStaticFiles();
 
 // فعال‌سازی CORS قبل از کنترلرها
 app.UseCors("frontend");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

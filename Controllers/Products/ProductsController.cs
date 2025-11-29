@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sushi.Data;
 using Sushi.Models.Products;
@@ -20,6 +21,7 @@ public class ProductsController : ControllerBase
     }
 
     // GET: /api/products?page=1&pageSize=20&search=...
+    // این متد برای همه آزاد است (بدون Authorize)
     [HttpGet]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     public async Task<ActionResult<object>> Get(
@@ -76,10 +78,13 @@ public class ProductsController : ControllerBase
         return product is null ? NotFound() : Ok(product);
     }
 
-    // POST: /api/products  (فرم + فایل)
+    // POST: /api/products  (فقط ادمین)
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<Product>> Create(
         [FromForm] ProductCreate dto,
         IFormFile? image)
@@ -129,10 +134,13 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = p.Id }, p);
     }
 
-    // PUT: /api/products/5  (اختیاری: تصویر جدید)
+    // PUT: /api/products/5  (فقط ادمین، تصویر جدید اختیاری)
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> Update(
         int id,
         [FromForm] ProductUpdate dto,
@@ -191,10 +199,13 @@ public class ProductsController : ControllerBase
         return NoContent();
     }
 
-    // DELETE: /api/products/5
+    // DELETE: /api/products/5  (فقط ادمین)
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteById(int id)
     {
         var p = await _db.Products.FindAsync(id);

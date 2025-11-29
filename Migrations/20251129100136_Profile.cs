@@ -5,14 +5,14 @@
 namespace Sushi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddProductImage : Migration
+    public partial class Profile : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ImagePath",
-                table: "Products",
+                name: "AvatarFileName",
+                table: "AppUsers",
                 type: "nvarchar(260)",
                 maxLength: 260,
                 nullable: true);
@@ -22,8 +22,8 @@ namespace Sushi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ImagePath",
-                table: "Products");
+                name: "AvatarFileName",
+                table: "AppUsers");
         }
     }
 }
